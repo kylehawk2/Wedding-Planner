@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Wedding_Planner.Models
+@model IEnumerable<Wedding>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,5 +11,26 @@
 </head>
 <body>
     <h1>Welcome to the Wedding Planner App!</h1>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Wedding</th>
+                <th>Date</th>
+                <th>Guest Count</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var wedding in Model)
+            {
+                <tr>
+                    <td>@wedding.WedderOne @wedding.WedderTwo</td>
+                    <td>@wedding.Date</td>
+                    <td>@wedding.RSVPs.Count()</td>
+                    <td><a href="">Do Something!</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </body>
 </html>

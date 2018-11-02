@@ -14,6 +14,6 @@ namespace Wedding_Planner.Models
         public string WedderTwo {get;set;}
         public DateTime CreatedAt {get;set;}
         public DateTime UpdatedAt {get;set;}
-        public List<RSVP> Attenders {get;set;}
+        public List<RSVP> RSVPs {get;set;}
     }
 }
