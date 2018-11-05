@@ -34,10 +34,12 @@ namespace Wedding_Planner.Controllers
 
             ViewBag.UserId = HttpContext.Session.GetInt32("UserId");
 
-            // weddings user has created - if user created wedding, should be able to delete it. If not, then RSVP or UnRSVP
+            // wedding's user has created - if user created wedding, should be able to delete it. If not, then RSVP or UnRSVP
             var responded = weddings.Where(w => w.RSVPs.Any(r => r.UserId  == 1));
 
-            return View("Welcome");
+            
+
+            return View("Welcome", weddings);
         }
         [HttpPost]
         [Route("Register")]

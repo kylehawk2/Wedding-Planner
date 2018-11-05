@@ -7,6 +7,6 @@ namespace Wedding_Planner.Models
         public WeddingPlannerContext(DbContextOptions<WeddingPlannerContext> options) : base(options) { } 
         public DbSet<User> Users {get;set;}
         public DbSet<Wedding> Weddings {get;set;}
-        public DbSet<RSVP> RSVPs {get;set;}
+        public DbSet<RSVP> RSVP {get;set;}
     }
 }

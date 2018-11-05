@@ -1,4 +1,4 @@
-﻿@using Wedding_Planner.Models
+﻿
 @model IEnumerable<Wedding>
 
 <!DOCTYPE html>
@@ -27,8 +27,22 @@
                     <td>@wedding.WedderOne @wedding.WedderTwo</td>
                     <td>@wedding.Date</td>
                     <td>@wedding.RSVPs.Count()</td>
-                    <td><a href="">Do Something!</a></td>
+                    @{
+                        if(wedding.UserId == ViewBag.UserId)
+                        {
+                            <td><a href=""DELETE></a></td>
+                        }
+                        else if(wedding.RSVPs.Any(r => r.UserId == ViewBag.UserId))
+                        {
+                            <td><a href="">Un-RSVP</a></td>
+                        }
+                        else
+                        {
+                            <td><a href="">RSVP</a></td>
+                        }
+                    }
                 </tr>
+
             }
         </tbody>
     </table>
