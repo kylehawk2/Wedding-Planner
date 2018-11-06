@@ -37,7 +37,7 @@ namespace Wedding_Planner.Controllers
             // wedding's user has created - if user created wedding, should be able to delete it. If not, then RSVP or UnRSVP
             var responded = weddings.Where(w => w.RSVPs.Any(r => r.UserId  == 1));
 
-            
+
 
             return View("Welcome", weddings);
         }

@@ -1,4 +1,4 @@
-﻿
+﻿@using Wedding_Planner.Models
 @model IEnumerable<Wedding>
 
 <!DOCTYPE html>
@@ -30,7 +30,7 @@
                     @{
                         if(wedding.UserId == ViewBag.UserId)
                         {
-                            <td><a href=""DELETE></a></td>
+                            <td><a href="">DELETE</a></td>
                         }
                         else if(wedding.RSVPs.Any(r => r.UserId == ViewBag.UserId))
                         {
