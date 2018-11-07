@@ -63,6 +63,7 @@ namespace Wedding_Planner.Controllers
                 };
                 dbContext.Add(NewUser);
                 dbContext.SaveChanges();
+                ViewBag.UserId = HttpContext.Session.GetInt32("UserId");
                 return RedirectToAction("Welcome");
             }
             
@@ -95,13 +96,106 @@ namespace Wedding_Planner.Controllers
                 ModelState.AddModelError("Password", "Invaild Password");
                 return View("Login");
             }
-            HttpContext.Session.SetInt32("id", userInDb.UserId);
+            HttpContext.Session.SetInt32("UserId", userInDb.UserId);
             return RedirectToAction("Welcome");
         }
-
-        public IActionResult Error()
+        [HttpGet]
+        [Route("Logout")]
+        public IActionResult Logout()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index");
+        }
+        [HttpGet]
+        [Route("NewWedding")]
+        public IActionResult NewWedding()
+        {
+            return View("NewWedding");
+        }
+        [HttpPost]
+        [Route("CreateWedding")]
+        public IActionResult CreateWedding(Wedding new_wedding)
+        {
+            if(ModelState.IsValid)
+            {
+                if(new_wedding.Date < DateTime.Today)
+                {
+                    ModelState.AddModelError("Date", "Date must be in the future!");
+                    return View("NewWedding");
+                }
+                else
+                {
+                    Wedding this_wedding = new Wedding
+                    {
+                        Address = new_wedding.Address,
+                        Date = new_wedding.Date,
+                        WedderOne = new_wedding.WedderOne,
+                        WedderTwo = new_wedding.WedderTwo,
+                        UserId = (int) HttpContext.Session.GetInt32("UserId")
+                    };
+                    dbContext.Add(this_wedding);
+                    dbContext.SaveChanges();
+                    return Redirect("{weddingId}");
+                }
+            }
+            else
+            {
+                if(new_wedding.Date < DateTime.Today)
+                {
+                    ModelState.AddModelError("Date", "Date must be in the future!");
+                }
+                return View("NewWedding");
+            }
+        }
+        [HttpGet]
+        [Route("{weddingId}")]
+        public IActionResult ViewWedding(int weddingId)
+        {
+            Wedding wedding = dbContext.Weddings
+            .Include(r => r.RSVPs)
+            .ThenInclude(u => u.User)
+            .Where(w => w.WeddingId == weddingId)
+            .SingleOrDefault();
+
+            ViewBag.Wedding = wedding;
+            ViewBag.Address = wedding.Address;
+            return View("ViewWedding");
+        }
+        [HttpPost]
+        [Route("RSVP")]
+        public IActionResult RSVP(int weddingId)
+        {
+            RSVP new_rsvp = new RSVP
+            {
+                UserId = (int) HttpContext.Session.GetInt32("UserId"),
+                WeddingId = weddingId
+            };
+            dbContext.Add(new_rsvp);
+            dbContext.SaveChanges();
+            return RedirectToAction("Welcome");
+        }
+        [HttpPost]
+        [Route("UnRSVP")]
+        public IActionResult UnRSVP(int weddingId)
+        {
+            RSVP this_attender = dbContext.RSVP.SingleOrDefault(u => u.UserId == HttpContext.Session.GetInt32("UserId") && u.WeddingId == weddingId);
+            dbContext.RSVP.Remove(this_attender);
+            dbContext.SaveChanges();
+            return RedirectToAction("Welcome");
+        }
+        [HttpPost]
+        [Route("Delete")]
+        public IActionResult Delete(int weddingId)
+        {
+            Wedding this_wedding = dbContext.Weddings.SingleOrDefault(w => w.WeddingId == weddingId);
+            List<RSVP> rsvps = dbContext.RSVP.Where(a => a.WeddingId == weddingId).ToList();
+            foreach(var attender in rsvps)
+            {
+                dbContext.RSVP.Remove(attender);
+            }
+            dbContext.Weddings.Remove(this_wedding);
+            dbContext.SaveChanges();
+            return RedirectToAction("Welcome");
         }
     }
 }

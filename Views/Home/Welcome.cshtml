@@ -24,21 +24,21 @@
             @foreach(var wedding in Model)
             {
                 <tr>
-                    <td>@wedding.WedderOne @wedding.WedderTwo</td>
+                    <td><a asp-controller="Home" asp-action="ViewWedding" asp-route-WeddingId="@wedding.WeddingId">@wedding.WedderOne & @wedding.WedderTwo</a></td>
                     <td>@wedding.Date</td>
                     <td>@wedding.RSVPs.Count()</td>
                     @{
                         if(wedding.UserId == ViewBag.UserId)
                         {
-                            <td><a href="">DELETE</a></td>
+                            <td><a href="/Delete">DELETE</a></td>
                         }
                         else if(wedding.RSVPs.Any(r => r.UserId == ViewBag.UserId))
                         {
-                            <td><a href="">Un-RSVP</a></td>
+                            <td><a href="/UnRSVP">Un-RSVP</a></td>
                         }
                         else
                         {
-                            <td><a href="">RSVP</a></td>
+                            <td><a href="/RSVP">RSVP</a></td>
                         }
                     }
                 </tr>
@@ -46,5 +46,8 @@
             }
         </tbody>
     </table>
+   <a href="NewWedding" class="btn btn-default">Create a New Wedding</a>
+   <a href="Logout" class="btn btn-danger">Logout</a>
+    
 </body>
 </html>
