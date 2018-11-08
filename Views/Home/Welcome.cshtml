@@ -30,15 +30,33 @@
                     @{
                         if(wedding.UserId == ViewBag.UserId)
                         {
-                            <td><a href="/Delete">DELETE</a></td>
+                            <td>
+                                <!-- <a href="/{weddingId}/Delete">DELETE</a> -->
+                                <form asp-action="Delete" asp-controller="Home" method="POST">
+                                    <input type="hidden" name="weddingId" value="@wedding.WeddingId">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </td>
                         }
                         else if(wedding.RSVPs.Any(r => r.UserId == ViewBag.UserId))
                         {
-                            <td><a href="/UnRSVP">Un-RSVP</a></td>
+                            <td>
+                                <!-- <a href="/{weddingId}/UnRSVP">Un-RSVP</a> -->
+                                <form asp-action="UnRSVP" asp-controller="Home" method="POST">
+                                    <input type="hidden" name="weddingId" value="@wedding.WeddingId">
+                                    <button type="submit" class="btn btn-primary">UnRSVP</button>
+                                </form>
+                            </td>
                         }
                         else
                         {
-                            <td><a href="/RSVP">RSVP</a></td>
+                            <td>
+                                <!-- <a href="/{weddingId}/RSVP">RSVP</a> -->
+                                <form asp-action="RSVP" asp-controller="Home" method="POST">
+                                    <input type="hidden" name="weddingId" value="@wedding.WeddingId">
+                                    <button type="submit" class="btn btn-primary">RSVP</button>
+                                </form>
+                            </td>
                         }
                     }
                 </tr>

@@ -63,7 +63,7 @@ namespace Wedding_Planner.Controllers
                 };
                 dbContext.Add(NewUser);
                 dbContext.SaveChanges();
-                ViewBag.UserId = HttpContext.Session.GetInt32("UserId");
+                HttpContext.Session.SetInt32("UserId", NewUser.UserId);
                 return RedirectToAction("Welcome");
             }
             
@@ -83,7 +83,7 @@ namespace Wedding_Planner.Controllers
             {
                 // Add an error to ModelState and return to View!
                 ModelState.AddModelError("Email", "Invalid Email/Password");
-                return View("Login");
+                return View("Index");
             }
             // Initialize hasher object
             var hasher = new PasswordHasher<User>();
@@ -94,7 +94,7 @@ namespace Wedding_Planner.Controllers
             {
                 Console.WriteLine("Invalid Password");
                 ModelState.AddModelError("Password", "Invaild Password");
-                return View("Login");
+                return View("Index");
             }
             HttpContext.Session.SetInt32("UserId", userInDb.UserId);
             return RedirectToAction("Welcome");
@@ -135,7 +135,7 @@ namespace Wedding_Planner.Controllers
                     };
                     dbContext.Add(this_wedding);
                     dbContext.SaveChanges();
-                    return Redirect("{weddingId}");
+                    return RedirectToAction("Welcome");
                 }
             }
             else
@@ -148,7 +148,7 @@ namespace Wedding_Planner.Controllers
             }
         }
         [HttpGet]
-        [Route("{weddingId}")]
+        [Route("ViewWedding/{weddingId}")]
         public IActionResult ViewWedding(int weddingId)
         {
             Wedding wedding = dbContext.Weddings
@@ -161,7 +161,7 @@ namespace Wedding_Planner.Controllers
             ViewBag.Address = wedding.Address;
             return View("ViewWedding");
         }
-        [HttpPost]
+        
         [Route("RSVP")]
         public IActionResult RSVP(int weddingId)
         {
@@ -170,31 +170,44 @@ namespace Wedding_Planner.Controllers
                 UserId = (int) HttpContext.Session.GetInt32("UserId"),
                 WeddingId = weddingId
             };
+
             dbContext.Add(new_rsvp);
             dbContext.SaveChanges();
+
             return RedirectToAction("Welcome");
         }
-        [HttpPost]
+        
         [Route("UnRSVP")]
         public IActionResult UnRSVP(int weddingId)
         {
-            RSVP this_attender = dbContext.RSVP.SingleOrDefault(u => u.UserId == HttpContext.Session.GetInt32("UserId") && u.WeddingId == weddingId);
+            RSVP this_attender = dbContext.RSVP
+            .SingleOrDefault(u => u.UserId == HttpContext.Session
+            .GetInt32("UserId") && u.WeddingId == weddingId);
+
             dbContext.RSVP.Remove(this_attender);
             dbContext.SaveChanges();
+
             return RedirectToAction("Welcome");
         }
-        [HttpPost]
+        
         [Route("Delete")]
         public IActionResult Delete(int weddingId)
         {
-            Wedding this_wedding = dbContext.Weddings.SingleOrDefault(w => w.WeddingId == weddingId);
-            List<RSVP> rsvps = dbContext.RSVP.Where(a => a.WeddingId == weddingId).ToList();
+            Wedding this_wedding = dbContext.Weddings
+            .SingleOrDefault(w => w.WeddingId == weddingId);
+
+            List<RSVP> rsvps = dbContext.RSVP
+            .Where(a => a.WeddingId == weddingId)
+            .ToList();
+
             foreach(var attender in rsvps)
             {
                 dbContext.RSVP.Remove(attender);
             }
+
             dbContext.Weddings.Remove(this_wedding);
             dbContext.SaveChanges();
+
             return RedirectToAction("Welcome");
         }
     }
