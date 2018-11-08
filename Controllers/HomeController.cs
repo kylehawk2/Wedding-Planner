@@ -61,7 +61,7 @@ namespace Wedding_Planner.Controllers
                     Email = @user.Email,
                     Password = @user.Password,
                 };
-                dbContext.Add(NewUser);
+                var userEnity = dbContext.Add(NewUser).Entity;
                 dbContext.SaveChanges();
                 HttpContext.Session.SetInt32("UserId", NewUser.UserId);
                 return RedirectToAction("Welcome");
